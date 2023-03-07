@@ -1,0 +1,1 @@
+# Script til að búa til gagnagrunn

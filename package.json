@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "dotenv -e .env -- nodemon",
     "start": "dotenv -e .env -- node --loader ts-node/esm ./src/app.ts",
-    "setup": "dotenv -e .env -- ts-node/esm ./src/setup.ts"
+    "setup": "dotenv -e .env -- node --loader ts-node/esm ./src/setup.ts"
   },
   "keywords": [],
   "author": "",
