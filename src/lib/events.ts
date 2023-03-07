@@ -11,61 +11,65 @@ CREATE TABLE public.events (
 );
 */
 
-import { QueryResult } from 'pg';
+import { QueryResult } from "pg";
 
-export type Event = {
+export type Index = {
   id: number;
-  name: string;
-  slug: string;
-  location?: string;
-  url?: string;
-  description?: string;
+  titill: string;
+  lysing: string;
   created: Date;
   updated: Date;
 };
 
-export function eventMapper(input: unknown): Event | null {
-  const potentialEvent = input as Partial<Event> | null;
+export function indexMapper(input: unknown): Index | null {
+  const potentialIndex = input as Partial<Index> | null;
+  console.log(potentialIndex)
+
 
   if (
-    !potentialEvent ||
-    !potentialEvent.id ||
-    !potentialEvent.name ||
-    !potentialEvent.slug ||
-    !potentialEvent.created ||
-    !potentialEvent.updated
+    !potentialIndex ||
+    !potentialIndex.id ||
+    !potentialIndex.titill ||
+    !potentialIndex.lysing ||
+    !potentialIndex.created ||
+    !potentialIndex.updated
   ) {
+    console.log('WTF')
     return null;
   }
 
-  const event: Event = {
-    id: potentialEvent.id,
-    name: potentialEvent.name,
-    slug: potentialEvent.slug,
-    created: new Date(potentialEvent.created),
-    updated: new Date(potentialEvent.updated),
+  const index: Index = {
+    id: potentialIndex.id,
+    titill: potentialIndex.titill,
+    lysing: potentialIndex.lysing,
+    created: new Date(potentialIndex.created),
+    updated: new Date(potentialIndex.updated),
   };
 
-  return event;
+  return index;
 }
 
-export function mapDbEventToEvent(
-  input: QueryResult<any> | null,
-): Event | null {
+export function mapDbIndexToIndex(
+  input: QueryResult<any> | null
+): Index | null {
   if (!input) {
     return null;
   }
 
-  return eventMapper(input.rows[0]);
+  return indexMapper(input.rows[0]);
 }
 
-export function mapDbEventsToEvents(
-  input: QueryResult<any> | null,
-): Array<Event> {
+export function mapDbIndicesToIndices(
+  input: QueryResult<any> | null
+): Array<Index> {
+
   if (!input) {
     return [];
   }
-  const mappedEvents = input?.rows.map(eventMapper);
 
-  return mappedEvents.filter((i): i is Event => Boolean(i));
+  const mappedIndices = input?.rows.map(indexMapper);
+
+  console.log(mappedIndices)
+
+  return mappedIndices.filter((i): i is Index => Boolean(i));
 }

@@ -1,17 +1,18 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { query } from '../lib/db.js';
 import {
-  mapDbEventsToEvents,
-  eventMapper,
-  mapDbEventToEvent,
+  mapDbIndicesToIndices,
+  indexMapper,
+  mapDbIndexToIndex,
 } from '../lib/events.js';
 
 export const router = express.Router();
 
 export async function index(req: Request, res: Response, next: NextFunction) {
-  const eventsResult = await query('SELECT * FROM events;');
+  const eventsResult = await query('SELECT * FROM deild;');
 
-  const events = mapDbEventsToEvents(eventsResult);
+  const events = mapDbIndicesToIndices(eventsResult);
+
 
   res.json(events);
 }
@@ -22,7 +23,7 @@ export async function event(req: Request, res: Response, next: NextFunction) {
     slug,
   ]);
 
-  const event = mapDbEventToEvent(eventsResult);
+  const event = mapDbIndexToIndex(eventsResult);
 
   if (!event) {
     return next();

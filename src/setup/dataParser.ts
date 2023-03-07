@@ -95,7 +95,7 @@ export function createInsertSQLFile() {
 	const index = dataParse()
 	console.log(index)
 	const indexSql = index?.map(section => {
-		return `INSERT INTO deild (titill, lysing) VALUES (${section.title}, ${section.description})`
+		return `INSERT INTO deild (titill, lysing) VALUES ('${section.title}', '${section.description}')`
 	})
 	// console.log(indexSql)
 	const csv = csvParse()
@@ -106,7 +106,7 @@ export function createInsertSQLFile() {
 			
 			return `INSERT INTO afangi (numer, heiti, einingar, kennslumisseri, namstig, hlekkur) VALUES (${course.numer}, ${course.heiti}, ${course.einingar}, ${course.kennslumiseri}, ${course.namstig}, ${course.hlekkur})`
 		})
-		console.log(deildSQL)
+
 		if (indexSql)
 			fs.writeFileSync('./sql/insert.sql', `${indexSql?.join(';\n')};`)
 		
