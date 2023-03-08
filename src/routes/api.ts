@@ -1,50 +1,14 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { query } from '../lib/db.js';
-import {
-  mapDbDepartmentsToDepartments,
-  departmentMapper,
-  mapDbDepartmentToDepartment,
-} from '../model/departments.js';
-import { mapDbCoursesToCourses } from '../model/courses.js';
+import express, { Request, Response} from 'express';
+import { departmentRouter } from './department-router.js';
+import { courseRouter } from './course-router.js';
 
 export const router = express.Router();
 
-export async function index(req: Request, res: Response, next: NextFunction) {
-  const eventsResult = await query('SELECT * FROM deild;');
 
-  const events = mapDbDepartmentsToDepartments(eventsResult);
+router.use('/department', departmentRouter)
+router.use('/course', courseRouter)
 
 
-  res.json(events);
-}
-
-export async function event(req: Request, res: Response, next: NextFunction) {
-  const { slug } = req.params;
-  const eventsResult = await query('SELECT * FROM afangi WHERE deildId = $1;', [
-    slug,
-  ]);
-
-  const courses = mapDbCoursesToCourses(eventsResult);
-
-  if (!courses) {
-    return next();
-  }
-
-  res.json(courses);
-}
-
-async function patchEvent() {}
-
-async function createEvent(req: Request, res: Response, next: NextFunction) {
-  const { title, slug, description } = req.body;
-
-  res.json({ title, slug, description });
-}
-
-async function deleteEvent() {}
-
-router.get('/', index);
-router.get('/:slug', event);
-router.patch('/:slug', patchEvent);
-router.post('/', createEvent);
-router.delete('/:slug', deleteEvent);
+router.get('/', (req : Request, res : Response) => {
+  return res.json({message: 'Hello'})
+});

@@ -1,4 +1,4 @@
-CREATE TABLE public.deild (
+CREATE TABLE public.department (
     id SERIAL PRIMARY KEY,
     titill VARCHAR(256) NOT NULL,
     slug VARCHAR(256) NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE public.deild (
     updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE public.afangi (
+CREATE TABLE public.course (
     id SERIAL PRIMARY KEY,
     numer VARCHAR(16) NOT NULL,
     slugNumer VARCHAR(16) NOT NULL,
@@ -16,8 +16,8 @@ CREATE TABLE public.afangi (
     kennslumisseri VARCHAR(64) NOT NULL,
     namstig VARCHAR(128) NOT NULL,
     hlekkur TEXT,
-    deildId INTEGER NOT NULL,
+    departmentId INTEGER NOT NULL,
     created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT deildId FOREIGN KEY (deildId) REFERENCES deild (id) ON DELETE CASCADE
+    CONSTRAINT departmentId FOREIGN KEY (departmentId) REFERENCES department (id) ON DELETE CASCADE
 );

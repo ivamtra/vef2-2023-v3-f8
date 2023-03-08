@@ -16,7 +16,6 @@ export type Course = {
 
 export function courseMapper(input: unknown): Course | null {
     const potentialCourse = input as Partial<Course> | null;
-
   
     if (
       !potentialCourse ||
