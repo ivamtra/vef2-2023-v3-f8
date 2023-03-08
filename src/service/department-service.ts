@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import {
   mapDbDepartmentToDepartment,
   mapDbDepartmentsToDepartments,
-} from "../model/departments";
-import { slugify } from "../lib/slugify";
-import { query } from "../lib/db";
+} from "../mappings/departments.js";
+import { slugify } from "../lib/slugify.js";
+import { conditionalUpdate, getDepartmentBySlug, query } from "../lib/db.js";
 
 // -------------------------------- READ --------------------------------------
 
@@ -41,12 +41,30 @@ export async function getDepartment(
 
 // -------------------------------- UPDATE --------------------------------------
 
+
+// todo
 export async function patchDepartment(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   const { slug } = req.params;
+
+  const fields = Object.keys(req.body)
+  const values : Array<string | number | null> = Object.values(req.body)
+
+  const department = await getDepartmentBySlug(slug)
+
+  if (!department || !department.id)
+    return next()
+
+  const result  = await conditionalUpdate('department', department?.id, fields, values)
+  if (!result) {
+    return next()
+  }
+  const updatedDepartment = mapDbDepartmentToDepartment(result)
+
+  res.json(updatedDepartment)
 }
 
 // -------------------------------- CREATE --------------------------------------
@@ -67,7 +85,6 @@ export async function createDepartment(
 
   const result = await query(q, [titill, slug, lysing]);
 
-  console.log(result);
 
   const department = mapDbDepartmentToDepartment(result);
   if (!department) {
@@ -91,7 +108,7 @@ export async function deleteDepartment(
   const department = mapDbDepartmentToDepartment(result);
 
   if (!department) {
-    return next();
+      return next();
   }
   res.json(department);
 }

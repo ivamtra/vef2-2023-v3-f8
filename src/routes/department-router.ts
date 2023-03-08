@@ -22,6 +22,6 @@ departmentRouter.delete("/:slug", deleteDepartment);
 // Courses
 departmentRouter.get("/:slug/courses", getCourses);
 departmentRouter.post("/:slug/courses", createCourse);
-departmentRouter.get(":slug/courses/courseId", getCourse);
-departmentRouter.patch(":slug/courses/courseId", patchCourse);
-departmentRouter.delete(":slug/courses/courseId", deleteCourse);
+departmentRouter.get("/:slug/courses/:courseId", getCourse);
+departmentRouter.patch("/:slug/courses/:courseId", patchCourse);
+departmentRouter.delete("/:slug/courses/:courseId", deleteCourse);

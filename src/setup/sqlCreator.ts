@@ -44,7 +44,7 @@ export function createCourseSQLFromCsv(pathFromRoot : string, departmentId : num
   // hlekkur: row[5],
   const courseSqlCommands : string[]  = courseArray.map((row, index) => {
     const slug = slugify(row[0], '-')
-    return `INSERT INTO course (numer, slugNumer, heiti, einingar, kennslumisseri, namstig, hlekkur, departmentId) VALUES ('${row[0]}', '${slug}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', '${departmentId}')`
+    return `INSERT INTO course (numer, slugNumer, heiti, einingar, kennslumisseri, namstig, hlekkur, departmentId) VALUES ('${row[0]}', '${slug}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', ${departmentId})`
   })
   return courseSqlCommands.join(';\n') + ';\n'
 
@@ -63,7 +63,10 @@ export function createSQLFile() {
 
   // IVT
   const ivt = createCourseSQLFromCsv('./data/ivt.csv', 2)
-  fs.writeFileSync('./sql/insert.sql', index + hagfraedi + ivt)
+
+  // Islenska
+  const islenska = createCourseSQLFromCsv('./data/islenska.csv', 3)
+  fs.writeFileSync('./sql/insert.sql', index + hagfraedi + ivt + islenska)
 }
 
 createSQLFile();
