@@ -50,30 +50,13 @@ export async function createCourse(
   next: NextFunction
 ) {
 
-
-  // {
-  //   "id": 3,
-  //   "created": "2023-03-08T16:16:06.605Z",
-  //   "updated": "2023-03-08T16:16:06.605Z",
-  //   "numer": "HAG104M",
-  //   "slugnumer": "hag104m",
-  //   "einingar": "6",
-  //   "kennslumisseri": "Haust",
-  //   "namstig": "Grunnnám / Framhaldsnám",
-  //   "hlekkur": "https://ugla.hi.is/kennsluskra/?tab=nam&chapter=namskeid&id=70754420226&kennsluar=2022",
-  //   "departmentid": 1
-  // }
   const {numer, einingar, kennslumisseri, namstig, hlekkur, heiti} = req.body
   const {slug} = req.params
 
-  const slugnumer = slugify(numer, '-')
-  
   const departmentQ = `select * from department where slug = $1`
   const departmentResult = await query(departmentQ, [slug])
 
   const department = mapDbDepartmentToDepartment(departmentResult)
-
-
 
   if (!department?.id && !department) {
     return
@@ -92,10 +75,7 @@ export async function createCourse(
 
   const course = mapDbCourseToCourse(courseResult)
 
-  console.log(courseResult)
-
-  console.log("Hello createCourse");
-  res.json({ message: "createCourse" });
+  res.json(course);
 }
 
 export async function patchCourse(
@@ -114,7 +94,8 @@ export async function patchCourse(
   if (!course || !course.id)
     return next()
 
-  const result  = await conditionalUpdate('course', course?.id, fields, values)
+  const result  = await conditionalUpdate('course', course.id, fields, values)
+  console.log(result)
   if (!result) {
     return next()
   }

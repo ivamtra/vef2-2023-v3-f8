@@ -62,6 +62,7 @@ export async function patchDepartment(
   if (!result) {
     return next()
   }
+  console.log(result)
   const updatedDepartment = mapDbDepartmentToDepartment(result)
 
   res.json(updatedDepartment)

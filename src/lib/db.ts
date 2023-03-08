@@ -93,9 +93,12 @@ export async function conditionalUpdate(
   
   
   const queryValues : Array<string | number | null> = ([id] as Array<string | number | null>).concat(filteredValues);
-  const result = await query(q, queryValues);
 
-  return result;
+  // Update time
+  const timeQuery = `update ${table} set updated = $1 returning *`
+  const timeResult = await query(timeQuery, [new Date().toISOString()])
+
+  return timeResult;
 }
 
 
@@ -112,6 +115,6 @@ export async function getCourseById(id: number) {
   const q = 'SELECT * FROM course where id = $1'
   const result = await query(q, [id])
   const course = mapDbCourseToCourse(result)
-  
+
   return course
 }
