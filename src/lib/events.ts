@@ -1,16 +1,3 @@
-/*
-CREATE TABLE public.events (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(64) NOT NULL UNIQUE,
-  slug VARCHAR(64) NOT NULL UNIQUE,
-  location VARCHAR(256),
-  url VARCHAR(256),
-  description TEXT,
-  created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-*/
-
 import { QueryResult } from "pg";
 
 export type Index = {
