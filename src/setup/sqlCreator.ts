@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { csvToArray } from "./csvParser.js";
-
+import { slugify } from "../lib/slugify.js";
 type Deild = {
   title: string;
   description: string;
@@ -25,7 +25,8 @@ export function createIndexSQLFromFile() : string {
   );
   // Bua til sql skipanir
   const indexSql = index.map((section) => {
-    return `INSERT INTO deild (titill, lysing) VALUES ('${section.title}', '${section.description}')`;
+    const slug = slugify(section.title, '-')
+    return `INSERT INTO deild (titill, slug, lysing) VALUES ('${section.title}', '${slug}', '${section.description}')`;
   });
 
   // fs.writeFileSync('./sql/insert.sql', indexSql.join(';\n') + ';\n')
@@ -43,8 +44,9 @@ export function createCourseSQLFromCsv(pathFromRoot : string, departmentId : num
   // kennslumiseri: row[3],
   // namstig: row[4],
   // hlekkur: row[5],
-  const courseSqlCommands : string[] = courseArray.map((row) => {
-    return `INSERT INTO afangi (numer, heiti, einingar, kennslumisseri, namstig, hlekkur, deildId) VALUES ('${row[0]}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', '${departmentId}')`
+  const courseSqlCommands : string[]  = courseArray.map((row, index) => {
+    const slug = slugify(row[0], '-')
+    return `INSERT INTO afangi (numer, slugNumer, heiti, einingar, kennslumisseri, namstig, hlekkur, deildId) VALUES ('${row[0]}', '${slug}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', '${departmentId}')`
   })
   return courseSqlCommands.join(';\n') + ';\n'
 
@@ -79,9 +81,10 @@ export function createSQLFile() {
   // Hagfræðideild
   const hagfraedi = createCourseSQLFromCsv('./data/hagfraedi.csv', 1)
 
+
   // IVT
   const ivt = createCourseSQLFromCsv('./data/ivt.csv', 2)
   fs.writeFileSync('./sql/insert.sql', index + hagfraedi + ivt)
 }
 
-createIndexSQLFromFile();
+createSQLFile();
