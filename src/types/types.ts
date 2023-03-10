@@ -12,8 +12,8 @@ export type Department = {
 export type Course = {
     id: number,
     number: string,
-    title: string,
     slug: string,
+    title: string,
     credits: number,
     semester: 'Vor' | 'Sumar' | 'Haust' | 'Hálfsárs',
     level: string,

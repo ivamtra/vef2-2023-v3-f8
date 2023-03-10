@@ -45,7 +45,7 @@ describe('integration', () => {
 
       test('PATCH /departments/testdeild returns 200 and description is update', async () => {
         const newLysing = {
-            lysing: 'updatedLysing'
+            description: 'updatedLysing'
         }
         const result = await patchAndParse('/departments/placeholder', newLysing)
         expect(result.status).toBe(200)

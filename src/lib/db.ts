@@ -135,7 +135,7 @@ export async function createCourse(course: Partial<Course>, departmentId: number
   const input = {
     number: course.number,
     title: course.title,
-    slug: slugify(course.title, '-'),
+    slug: slugify(course.number, '-'),
     semester: course.semester,
     credits: course.credits,
     level: course.level ? course.level : null,
@@ -166,4 +166,14 @@ export async function createDepartment(department:  Partial<Department>) : Promi
   const departmentResult = mapDbDepartmentToDepartment(result)
   return departmentResult
   
+}
+
+
+export async function getCourseBySlug(slug : string) {
+  const q  = 'SELECT * FROM course where slug = $1'
+
+  const result = await query(q, [slug])
+
+  const course = mapDbCourseToCourse(result)
+  return course
 }

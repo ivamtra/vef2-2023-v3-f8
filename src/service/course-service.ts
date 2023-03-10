@@ -3,6 +3,7 @@ import {
   conditionalUpdate,
   createCourse,
   getCourseById,
+  getCourseBySlug,
   getDepartmentBySlug,
   query,
 } from "../lib/db.js";
@@ -40,17 +41,14 @@ export async function getCourseService(
   next: NextFunction
 ) {
   const { courseId } = req.params;
-  const q = `SELECT *
-             FROM course
-             WHERE id = $1`;
-  const result = await query(q, [courseId]);
 
-  if (!result) {
-    next();
+
+  const course = await getCourseBySlug(courseId);
+
+  if (!course) {
+    return next()
   }
 
-  const course = mapDbCourseToCourse(result);
-  console.log(course);
   res.json(course);
 }
 
