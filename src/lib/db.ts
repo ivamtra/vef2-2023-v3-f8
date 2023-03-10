@@ -2,6 +2,8 @@ import { readFile } from "fs/promises";
 import pg from "pg";
 import { mapDbDepartmentToDepartment } from "../mappings/departments.js";
 import { mapDbCourseToCourse } from "../mappings/courses.js";
+import { Course, Department } from "../types/types.js";
+import { slugify } from "./slugify.js";
 
 const SCHEMA_FILE = "./sql/schema.sql";
 const DROP_SCHEMA_FILE = "./sql/drop.sql";
@@ -93,10 +95,10 @@ export async function conditionalUpdate(
   
   
   const queryValues : Array<string | number | null> = ([id] as Array<string | number | null>).concat(filteredValues);
-  await query(q, queryValues)
+  const result = await query(q, queryValues)
   // Update time
-  const timeQuery = `update ${table} set updated = $1 returning *`
-  const timeResult = await query(timeQuery, [new Date().toISOString()])
+  const timeQuery = `update ${table} set updated = $1 where id = $2 returning *`
+  const timeResult = await query(timeQuery, [new Date().toISOString(), result?.rows[0].id])
 
   return timeResult;
 }
@@ -117,4 +119,51 @@ export async function getCourseById(id: number) {
   const course = mapDbCourseToCourse(result)
 
   return course
+}
+
+export async function createCourse(course: Partial<Course>, departmentId: number) {
+  const insertQ = `INSERT INTO course
+                   (number, title, slug, semester, credits, level, url, departmentId)
+                   VALUES
+                   ($1, $2, $3, $4, $5, $6, $7, $8)
+                   RETURNING *`
+
+  // Check if course is sufficient
+  if (!course.number || !course.title || !course.semester || course.credits === undefined) {
+    return null
+  }
+  const input = {
+    number: course.number,
+    title: course.title,
+    slug: slugify(course.title, '-'),
+    semester: course.semester,
+    credits: course.credits,
+    level: course.level ? course.level : null,
+    url: course.url ? course.url : null,
+    departmentId
+  }
+  const values = [input.number, input.title, input.slug, input.semester, input.credits, input.level, input.url, departmentId]
+
+  const result = await query(insertQ, values)
+
+  const courseResult = mapDbCourseToCourse(result)
+
+  return courseResult
+
+
+}
+
+export async function createDepartment(department:  Partial<Department>) : Promise<Department | null> {
+  const q = `INSERT INTO department (title, slug, description) VALUES ($1, $2, $3)
+  RETURNING *`;
+  if (!department.title) {
+    return null
+  }
+  const description = department.description ? department.description : null
+  const values = [department.title, slugify(department.title, '-'), description]
+
+  const result = await query(q, values)
+  const departmentResult = mapDbDepartmentToDepartment(result)
+  return departmentResult
+  
 }

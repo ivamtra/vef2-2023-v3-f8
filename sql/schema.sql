@@ -1,23 +1,25 @@
 CREATE TABLE public.department (
     id SERIAL PRIMARY KEY,
-    titill VARCHAR(256) NOT NULL,
-    slug VARCHAR(256) NOT NULL,
-    lysing TEXT,
+    title VARCHAR(64) NOT NULL UNIQUE,
+    slug VARCHAR(64) NOT NULL UNIQUE,
+    description VARCHAR(1000) DEFAULT '',
     created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TYPE semester as ENUM ('Vor', 'Sumar', 'Haust', 'Hálfsárs');
+
 CREATE TABLE public.course (
     id SERIAL PRIMARY KEY,
-    numer VARCHAR(16) NOT NULL,
-    slugNumer VARCHAR(16) NOT NULL,
-    heiti VARCHAR(256) NOT NULL,
-    einingar VARCHAR(8) NOT NULL,
-    kennslumisseri VARCHAR(64) NOT NULL,
-    namstig VARCHAR(128) NOT NULL,
-    hlekkur TEXT,
-    departmentId INTEGER NOT NULL,
+    number VARCHAR(16) UNIQUE NOT NULL,
+    title VARCHAR(128) UNIQUE NOT NULL,
+    slug VARCHAR(128) UNIQUE NOT NULL,
+    credits REAL NOT NULL CONSTRAINT credits_check CHECK (credits > 0),
+    semester semester NOT NULL,
+    level VARCHAR(128) NOT NULL,
+    url VARCHAR(256),
+    departmentid INTEGER NOT NULL,
     created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT departmentId FOREIGN KEY (departmentId) REFERENCES department (id) ON DELETE CASCADE
+    CONSTRAINT departmentid FOREIGN KEY (departmentid) REFERENCES department (id) ON DELETE CASCADE
 );

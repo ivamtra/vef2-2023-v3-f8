@@ -1,10 +1,10 @@
 import express from "express";
 import {
-  createDepartment,
+  getDepartmentService,
   deleteDepartment,
-  getDepartment,
-  getDepartments,
+  getDepartmentsService,
   patchDepartment,
+  postDepartmentService,
 } from "../service/department-service.js";
 import { createCourse, deleteCourse, getCourse, getCourses, patchCourse } from "../service/course-service.js";
 
@@ -13,10 +13,10 @@ export const departmentRouter = express.Router();
 // -------------------- Endpoints ------------------------
 
 // Departments
-departmentRouter.get("/", getDepartments);
-departmentRouter.get("/:slug", getDepartment);
+departmentRouter.get("/", getDepartmentsService);
+departmentRouter.get("/:slug", getDepartmentService);
 departmentRouter.patch("/:slug", patchDepartment);
-departmentRouter.post("/", createDepartment);
+departmentRouter.post("/", postDepartmentService);
 departmentRouter.delete("/:slug", deleteDepartment);
 
 // Courses

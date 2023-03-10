@@ -1,3 +1,6 @@
+import { slugify } from "../lib/slugify.js";
+import { Course } from "../types/types.js";
+
 export function deleteRow(arr: string[][], row: number): string[][] {
   const copy = [...arr]; // make copy
   copy.splice(row, 1);
@@ -30,15 +33,22 @@ export function csvToArray(csv: string) {
 }
 
 // // TODO Unit test
-// export function csvArrayToObject(csvArray: string[][]): Afangi[] {
-//   return csvArray.map((row) => {
-//     return {
-//       numer: row[0],
-//       heiti: row[1],
-//       einingar: row[2],
-//       kennslumiseri: row[3],
-//       namstig: row[4],
-//       hlekkur: row[5],
-//     };
-//   });
-// }
+export function arrayToCourse(csvArray: string[][], departmentid: number): Course[] {
+  return csvArray.map((row, index) => {
+    return {
+      id: index,
+      number: row[0],
+      title: row[1],
+      slug: slugify(row[1], '-'),
+      semester: 'Vor',
+      credits: Number(row[2]),
+      level: row[4],
+      url: row[5],
+      departmentid,
+      created: new Date(),
+      updated: new Date()
+    };
+  });
+}
+
+

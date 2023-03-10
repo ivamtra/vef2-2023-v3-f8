@@ -4,23 +4,25 @@ import {
   mapDbDepartmentsToDepartments,
 } from "../mappings/departments.js";
 import { slugify } from "../lib/slugify.js";
-import { conditionalUpdate, getDepartmentBySlug, query } from "../lib/db.js";
+import { conditionalUpdate, createDepartment, getDepartmentBySlug, query } from "../lib/db.js";
 
 // -------------------------------- READ --------------------------------------
 
-export async function getDepartments(
+export async function getDepartmentsService(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   const departmentsResult = await query("SELECT * FROM department;");
 
+  if (departmentsResult === null) {
+    next()
+  }
   const events = mapDbDepartmentsToDepartments(departmentsResult);
-
   res.json(events);
 }
 
-export async function getDepartment(
+export async function getDepartmentService(
   req: Request,
   res: Response,
   next: NextFunction
@@ -32,7 +34,6 @@ export async function getDepartment(
   );
   const department = mapDbDepartmentToDepartment(departmentResult);
 
-  console.log(department);
   if (!department) {
     return next();
   }
@@ -49,6 +50,12 @@ export async function patchDepartment(
   next: NextFunction
 ) {
   const { slug } = req.params;
+  // console.log(slug)
+  if (req.body.id || req.body.slug) {
+    // Bad request
+    res.status(400)
+    return res.json({"message": 'Bad request'})
+  }
 
   const fields = Object.keys(req.body)
   const values : Array<string | number | null> = Object.values(req.body)
@@ -62,7 +69,6 @@ export async function patchDepartment(
   if (!result) {
     return next()
   }
-  console.log(result)
   const updatedDepartment = mapDbDepartmentToDepartment(result)
 
   res.json(updatedDepartment)
@@ -70,28 +76,20 @@ export async function patchDepartment(
 
 // -------------------------------- CREATE --------------------------------------
 
-export async function createDepartment(
+export async function postDepartmentService(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  console.log("CREATE DEPARTMENT");
-  console.log(req.body);
-  const { titill, lysing } = req.body;
+  const { title, description } = req.body;
 
-  const slug = slugify(titill, "-");
-
-  const q = `INSERT INTO department (titill, slug, lysing) VALUES ($1, $2, $3)
-               RETURNING id, titill, slug, lysing, created, updated `;
-
-  const result = await query(q, [titill, slug, lysing]);
-
-
-  const department = mapDbDepartmentToDepartment(result);
+  const department = await createDepartment({title, description})
   if (!department) {
-    return next();
+    res.status(400)
+    return res.json({message: 'Bad request'})
   }
-  res.json(department);
+  res.status(201)
+  return res.json(department);
 }
 
 // -------------------------------- DELETE --------------------------------------
@@ -111,5 +109,6 @@ export async function deleteDepartment(
   if (!department) {
       return next();
   }
+  res.status(204)
   res.json(department);
 }

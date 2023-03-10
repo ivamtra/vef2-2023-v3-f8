@@ -39,6 +39,10 @@ export async function getCourse(
              WHERE id = $1`;
   const result = await query(q, [courseId])
 
+  if (!result) {
+    next()
+  }
+
   const course = mapDbCourseToCourse(result)
   console.log(course)
   res.json(course);
@@ -73,8 +77,13 @@ export async function createCourse(
 
   const courseResult = await query(insertQ, values)
 
+  if (!courseResult) {
+    next()
+  }
+
   const course = mapDbCourseToCourse(courseResult)
 
+  res.status(201)
   res.json(course);
 }
 
@@ -115,7 +124,11 @@ export async function deleteCourse(
   const q = `DELETE FROM course WHERE id = $1 RETURNING *`
 
   const result = await query(q, [courseId])
+  if (!result) {
+    next()
+  }
   const course = mapDbCourseToCourse(result)
 
+  res.status(204)
   res.json(course);
 }

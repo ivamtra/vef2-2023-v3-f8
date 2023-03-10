@@ -8,6 +8,6 @@
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["**/*.ts", "src/setup.ts"],
+  "include": ["**/*.ts", "src/setup.ts", "babe.config.js"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

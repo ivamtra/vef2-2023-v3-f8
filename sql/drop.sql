@@ -1,2 +1,3 @@
 DROP TABLE IF EXISTS course;
+DROP TYPE IF EXISTS semester;
 DROP TABLE IF EXISTS department;

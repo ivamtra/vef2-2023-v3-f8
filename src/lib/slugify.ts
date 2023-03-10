@@ -1,10 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 // https://gist.github.com/mathewbyrne/1280286 😊
-export function slugify(text: string, separator: string) : string | null {
-    if (typeof text !== 'string') {
-      return null;
-    }
+export function slugify(text: string, separator: string) : string  {
   
     text = text.toString().toLowerCase().trim();
   

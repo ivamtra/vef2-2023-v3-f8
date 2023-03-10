@@ -1,6 +1,7 @@
 import * as fs from "fs";
-import { csvToArray } from "./csvParser.js";
+import { arrayToCourse, csvToArray } from "./csvParser.js";
 import { slugify } from "../lib/slugify.js";
+import { Course, Department } from "../types/types.js";
 type CSVDeild = {
   title: string;
   description: string;
@@ -17,56 +18,51 @@ type CSVDeild = {
 // };
 
 
-export function createIndexSQLFromFile() : string {
+export function createDepartmentsFromJson() : Department[] {
   const index: CSVDeild[] = JSON.parse(
     fs.readFileSync("./data/index.json", "utf-8")
   );
-  // Bua til sql skipanir
-  const indexSql = index.map((section) => {
-    const slug = slugify(section.title, '-')
-    return `INSERT INTO department (titill, slug, lysing) VALUES ('${section.title}', '${slug}', '${section.description}')`;
-  });
 
-  // fs.writeFileSync('./sql/insert.sql', indexSql.join(';\n') + ';\n')
-  return indexSql.join(';\n') + ';\n'
+  const departments : Department[] = index.map((csvDeild, index) => {
+    return {
+      id: index,
+      title: csvDeild.title,
+      slug: slugify(csvDeild.title, '-'),
+      description: csvDeild.description,
+      created: new Date(),
+      updated: new Date()
+    }
+  })
+
+  return departments
 }
 
 
 
-export function createCourseSQLFromCsv(pathFromRoot : string, departmentId : number) : string {
+export function createCoursesFromCSV(pathFromRoot : string, departmentId : number) : Course[] {
   const courseArray : string[][] = csvToArray( fs.readFileSync(pathFromRoot, 'latin1'))
 
-  // numer: row[0],
-  // heiti: row[1],
-  // einingar: row[2],
-  // kennslumiseri: row[3],
-  // namstig: row[4],
-  // hlekkur: row[5],
-  const courseSqlCommands : string[]  = courseArray.map((row) => {
-    const slug = slugify(row[0], '-')
-    return `INSERT INTO course (numer, slugNumer, heiti, einingar, kennslumisseri, namstig, hlekkur, departmentId) VALUES ('${row[0]}', '${slug}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', ${departmentId})`
-  })
-  return courseSqlCommands.join(';\n') + ';\n'
-
+  const courses : Course[] = arrayToCourse(courseArray, departmentId)
+  return courses
 
 }
 
 
-export function createSQLFile() {
-  // Create index
-  const index = createIndexSQLFromFile()
+// export function createSQLFile() {
+//   // Create index
+//   const index = createIndexSQLFromFile()
 
 
-  // Hagfræðideild
-  const hagfraedi = createCourseSQLFromCsv('./data/hagfraedi.csv', 1)
+//   // Hagfræðideild
+//   const hagfraedi = createCourseSQLFromCsv('./data/hagfraedi.csv', 1)
 
 
-  // IVT
-  const ivt = createCourseSQLFromCsv('./data/ivt.csv', 2)
+//   // IVT
+//   const ivt = createCourseSQLFromCsv('./data/ivt.csv', 2)
 
-  // Islenska
-  const islenska = createCourseSQLFromCsv('./data/islenska.csv', 3)
-  fs.writeFileSync('./sql/insert.sql', index + hagfraedi + ivt + islenska)
-}
+//   // Islenska
+//   const islenska = createCourseSQLFromCsv('./data/islenska.csv', 3)
+//   fs.writeFileSync('./sql/insert.sql', index + hagfraedi + ivt + islenska)
+// }
 
-createSQLFile();
+// createSQLFile();

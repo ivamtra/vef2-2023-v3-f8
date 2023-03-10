@@ -1,17 +1,7 @@
 import { QueryResult } from "pg";
+import { Course } from "../types/types";
 
-export type Course = {
-  id: number;
-  numer: string;
-  slugnumer: string;
-  einingar: string;
-  kennslumisseri: string;
-  namstig: string;
-  hlekkur: string;
-  departmentid: number;
-  created: Date;
-  updated: Date;
-};
+
 
 export function courseMapper(input: unknown): Course | null {
   const potentialCourse = input as Partial<Course> | null;
@@ -19,12 +9,13 @@ export function courseMapper(input: unknown): Course | null {
   if (
     !potentialCourse ||
     !potentialCourse.id ||
-    !potentialCourse.numer ||
-    !potentialCourse.slugnumer ||
-    !potentialCourse.einingar ||
-    !potentialCourse.kennslumisseri ||
-    !potentialCourse.namstig ||
-    !potentialCourse.hlekkur ||
+    !potentialCourse.title ||
+    !potentialCourse.slug ||
+    !potentialCourse.number ||
+    !potentialCourse.semester ||
+    !potentialCourse.credits ||
+    !potentialCourse.level ||
+    !potentialCourse.url ||
     !potentialCourse.departmentid ||
     !potentialCourse.created ||
     !potentialCourse.updated
@@ -34,15 +25,16 @@ export function courseMapper(input: unknown): Course | null {
 
   const course: Course = {
     id: potentialCourse.id,
+    title: potentialCourse.title,
+    slug: potentialCourse.slug,
+    number: potentialCourse.number,
+    semester: potentialCourse.semester,
+    credits: potentialCourse.credits,
+    level: potentialCourse.level,
+    url: potentialCourse.url,
+    departmentid: potentialCourse.departmentid,
     created: new Date(potentialCourse.created),
     updated: new Date(potentialCourse.updated),
-    numer: potentialCourse.numer,
-    slugnumer: potentialCourse.slugnumer,
-    einingar: potentialCourse.einingar,
-    kennslumisseri: potentialCourse.kennslumisseri,
-    namstig: potentialCourse.namstig,
-    hlekkur: potentialCourse.hlekkur,
-    departmentid: potentialCourse.departmentid,
   };
 
   return course;

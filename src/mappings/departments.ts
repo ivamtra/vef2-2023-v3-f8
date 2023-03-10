@@ -1,13 +1,7 @@
 import { QueryResult } from "pg";
+import { Department } from "../types/types";
 
-export type Department = {
-  id: number;
-  titill: string;
-  slug: string;
-  lysing: string;
-  created: Date;
-  updated: Date;
-};
+
 
 export function departmentMapper(input: unknown): Department | null {
   const potentialDepartment = input as Partial<Department> | null;
@@ -15,9 +9,9 @@ export function departmentMapper(input: unknown): Department | null {
   if (
     !potentialDepartment ||
     !potentialDepartment.id ||
-    !potentialDepartment.titill ||
+    !potentialDepartment.title ||
     !potentialDepartment.slug ||
-    !potentialDepartment.lysing ||
+    !potentialDepartment.description ||
     !potentialDepartment.created ||
     !potentialDepartment.updated
   ) {
@@ -27,9 +21,9 @@ export function departmentMapper(input: unknown): Department | null {
 
   const department: Department = {
     id: potentialDepartment.id,
-    titill: potentialDepartment.titill,
+    title: potentialDepartment.title,
     slug: potentialDepartment.slug,
-    lysing: potentialDepartment.lysing,
+    description: potentialDepartment.description,
     created: new Date(potentialDepartment.created),
     updated: new Date(potentialDepartment.updated),
   };
