@@ -93,7 +93,7 @@ export async function conditionalUpdate(
   
   
   const queryValues : Array<string | number | null> = ([id] as Array<string | number | null>).concat(filteredValues);
-
+  await query(q, queryValues)
   // Update time
   const timeQuery = `update ${table} set updated = $1 returning *`
   const timeResult = await query(timeQuery, [new Date().toISOString()])

@@ -7,19 +7,23 @@ export function deleteRow(arr: string[][], row: number): string[][] {
 export function csvToArray(csv: string) {
   const rows = csv.split("\n");
   let arr = rows.map((row) => row.split(";"));
+  console.log()
 
   // Athuga ef raðir eru löglegar
   // Þ.e. hafa 6 dálka
-  const rowsToDelete: number[] | any[] = [];
+  const rowsToDelete: Array<number> = [];
   arr.forEach((row, index) => {
     if (row.length !== 6) {
       rowsToDelete.push(index);
     }
   });
+ 
 
   // Eyða þeim ef þær passa ekki
   while (rowsToDelete.length > 0) {
-    arr = deleteRow(arr, rowsToDelete.pop());
+    const num = rowsToDelete.pop()
+    if (num !== undefined)
+      arr = deleteRow(arr, num);
   }
 
   return arr;

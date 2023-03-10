@@ -38,7 +38,7 @@ export function departmentMapper(input: unknown): Department | null {
 }
 
 export function mapDbDepartmentToDepartment(
-  input: QueryResult<any> | null
+  input: QueryResult<Department> | null
 ): Department | null {
   if (!input) {
     return null;
@@ -48,7 +48,7 @@ export function mapDbDepartmentToDepartment(
 }
 
 export function mapDbDepartmentsToDepartments(
-  input: QueryResult<any> | null
+  input: QueryResult<Department> | null
 ): Array<Department> {
 
   if (!input) {

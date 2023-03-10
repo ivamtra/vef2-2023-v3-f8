@@ -49,7 +49,7 @@ export function courseMapper(input: unknown): Course | null {
 }
 
 export function mapDbCourseToCourse(
-  input: QueryResult<any> | null
+  input: QueryResult<Course> | null
 ): Course | null {
   if (!input) {
     return null;
@@ -59,7 +59,7 @@ export function mapDbCourseToCourse(
 }
 
 export function mapDbCoursesToCourses(
-  input: QueryResult<any> | null
+  input: QueryResult<Course> | null
 ): Array<Course> {
   if (!input) {
     return [];

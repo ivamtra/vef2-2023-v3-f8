@@ -1,24 +1,24 @@
 import * as fs from "fs";
 import { csvToArray } from "./csvParser.js";
 import { slugify } from "../lib/slugify.js";
-type Deild = {
+type CSVDeild = {
   title: string;
   description: string;
   csv: string;
 };
 
-type Afangi = {
-  numer: string;
-  heiti: string;
-  einingar: number;
-  kennslumiseri: string;
-  namstig: string;
-  hlekkur: string;
-};
+// type CSVAfangi = {
+//   numer: string;
+//   heiti: string;
+//   einingar: number;
+//   kennslumiseri: string;
+//   namstig: string;
+//   hlekkur: string;
+// };
 
 
 export function createIndexSQLFromFile() : string {
-  const index: Deild[] = JSON.parse(
+  const index: CSVDeild[] = JSON.parse(
     fs.readFileSync("./data/index.json", "utf-8")
   );
   // Bua til sql skipanir
@@ -42,7 +42,7 @@ export function createCourseSQLFromCsv(pathFromRoot : string, departmentId : num
   // kennslumiseri: row[3],
   // namstig: row[4],
   // hlekkur: row[5],
-  const courseSqlCommands : string[]  = courseArray.map((row, index) => {
+  const courseSqlCommands : string[]  = courseArray.map((row) => {
     const slug = slugify(row[0], '-')
     return `INSERT INTO course (numer, slugNumer, heiti, einingar, kennslumisseri, namstig, hlekkur, departmentId) VALUES ('${row[0]}', '${slug}', '${row[1]}', '${row[2]}', '${row[3]}', '${row[4]}', '${row[5]}', ${departmentId})`
   })
