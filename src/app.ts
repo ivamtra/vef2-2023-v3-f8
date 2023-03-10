@@ -1,13 +1,16 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import { router } from './routes/api.js';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
+app.use(cors({origin: '*'}))
 app.use(router);
+
 
 // const port = 3000;
 
