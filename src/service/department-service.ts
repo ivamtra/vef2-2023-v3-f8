@@ -3,7 +3,6 @@ import {
   mapDbDepartmentToDepartment,
   mapDbDepartmentsToDepartments,
 } from "../mappings/departments.js";
-import { slugify } from "../lib/slugify.js";
 import { conditionalUpdate, createDepartment, getDepartmentBySlug, query } from "../lib/db.js";
 
 // -------------------------------- READ --------------------------------------
@@ -79,7 +78,6 @@ export async function patchDepartment(
 export async function postDepartmentService(
   req: Request,
   res: Response,
-  next: NextFunction
 ) {
   const { title, description } = req.body;
 
@@ -94,7 +92,7 @@ export async function postDepartmentService(
 
 // -------------------------------- DELETE --------------------------------------
 
-export async function deleteDepartment(
+export async function deleteDepartmentService(
   req: Request,
   res: Response,
   next: NextFunction

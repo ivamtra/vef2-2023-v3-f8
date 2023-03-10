@@ -1,12 +1,12 @@
 import express from "express";
 import {
   getDepartmentService,
-  deleteDepartment,
   getDepartmentsService,
   patchDepartment,
   postDepartmentService,
+  deleteDepartmentService,
 } from "../service/department-service.js";
-import { createCourse, deleteCourse, getCourse, getCourses, patchCourse } from "../service/course-service.js";
+import {  createCourseService, deleteCourseService, getCourseService, getCoursesService, patchCourseService } from "../service/course-service.js";
 
 export const departmentRouter = express.Router();
 
@@ -17,11 +17,11 @@ departmentRouter.get("/", getDepartmentsService);
 departmentRouter.get("/:slug", getDepartmentService);
 departmentRouter.patch("/:slug", patchDepartment);
 departmentRouter.post("/", postDepartmentService);
-departmentRouter.delete("/:slug", deleteDepartment);
+departmentRouter.delete("/:slug", deleteDepartmentService);
 
 // Courses
-departmentRouter.get("/:slug/courses", getCourses);
-departmentRouter.post("/:slug/courses", createCourse);
-departmentRouter.get("/:slug/courses/:courseId", getCourse);
-departmentRouter.patch("/:slug/courses/:courseId", patchCourse);
-departmentRouter.delete("/:slug/courses/:courseId", deleteCourse);
+departmentRouter.get("/:slug/courses", getCoursesService);
+departmentRouter.post("/:slug/courses", createCourseService);
+departmentRouter.get("/:slug/courses/:courseId", getCourseService);
+departmentRouter.patch("/:slug/courses/:courseId", patchCourseService);
+departmentRouter.delete("/:slug/courses/:courseId", deleteCourseService);
