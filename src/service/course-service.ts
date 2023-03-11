@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import {
   conditionalUpdate,
   createCourse,
-  getCourseById,
   getCourseBySlug,
   getDepartmentBySlug,
   query,
@@ -12,6 +11,7 @@ import {
   mapDbCoursesToCourses,
 } from "../mappings/courses.js";
 import { slugify } from "../lib/slugify.js";
+import { QueryResult } from "pg";
 
 export async function getCoursesService(
   req: Request,
@@ -43,27 +43,25 @@ export async function getCourseService(
 ) {
   const { courseId } = req.params;
 
-
   const course = await getCourseBySlug(courseId);
 
   if (!course) {
-    return next()
+    return next();
   }
 
   res.json(course);
 }
 
-export async function createCourseService(
-  req: Request,
-  res: Response,
-) {
+export async function createCourseService(req: Request, res: Response) {
   const { number, title, credits, semester, level, url } = req.body;
   const { slug } = req.params;
 
   const department = await getDepartmentBySlug(slug);
+
   if (department === null) {
     res.status(400);
-    return res.json({ message: "Bad request" });
+    res.json({ message: "Bad request" });
+    return;
   }
 
   const course = await createCourse(
@@ -83,10 +81,9 @@ export async function patchCourseService(
   console.log(req.params);
   const courseId = req.params.courseId;
 
-
   // Ef breyta á númeri áfanga
   if (req.body.number) {
-    req.body.slug = slugify(req.body.number, '-')
+    req.body.slug = slugify(req.body.number, "-");
   }
 
   const fields = Object.keys(req.body);
@@ -97,16 +94,23 @@ export async function patchCourseService(
   // 404
   if (!course || !course.id) return next();
 
-  const result = await conditionalUpdate("course", course.id, fields, values);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let result : QueryResult<any> | null | false;
+  try {
+    result = await conditionalUpdate("course", course.id, fields, values);
+  } catch {
+    res.status(500);
+    return;
+  }
   if (!result) {
     res.status(400);
-    return res.json({ message: "bad request" });
+    res.json({ message: "bad request" });
+    return;
   }
   const updatedCourse = mapDbCourseToCourse(result);
 
   res.json(updatedCourse);
 }
-
 
 export async function deleteCourseService(
   req: Request,
@@ -115,13 +119,18 @@ export async function deleteCourseService(
 ) {
   const { courseId } = req.params;
 
-  const q = `DELETE FROM course WHERE id = $1 RETURNING *`;
+  const q = `DELETE FROM course WHERE slug = $1 RETURNING *`;
 
   const result = await query(q, [courseId]);
-  if (!result) {
-    next();
+  if (result === null ) {
+    next()
+    return
   }
   const course = mapDbCourseToCourse(result);
+  if (!course) {
+    next()
+    return
+  }
 
   res.status(204);
   res.json(course);

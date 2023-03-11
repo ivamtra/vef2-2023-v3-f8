@@ -63,13 +63,15 @@ export async function patchDepartment(
 
   if (!department || !department.id) {
     res.status(404)
-    return next()
+    next()
+    return
   }
 
   const result  = await conditionalUpdate('department', department?.id, fields, values)
   if (!result) {
     res.status(400)
-    return res.json({"message": 'Bad request'})
+    res.json({"message": 'Bad request'})
+    return
   }
   const updatedDepartment = mapDbDepartmentToDepartment(result)
 
@@ -87,10 +89,11 @@ export async function postDepartmentService(
   const department = await createDepartment({title, description})
   if (!department) {
     res.status(400)
-    return res.json({message: 'Bad request'})
+    res.json({message: 'Bad request'})
+    return
   }
   res.status(201)
-  return res.json(department);
+  res.json(department);
 }
 
 // -------------------------------- DELETE --------------------------------------
