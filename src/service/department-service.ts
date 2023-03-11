@@ -4,6 +4,7 @@ import {
   mapDbDepartmentsToDepartments,
 } from "../mappings/departments.js";
 import { conditionalUpdate, createDepartment, getDepartmentBySlug, query } from "../lib/db.js";
+import { slugify } from "../lib/slugify.js";
 
 // -------------------------------- READ --------------------------------------
 
@@ -49,11 +50,10 @@ export async function patchDepartment(
   next: NextFunction
 ) {
   const { slug } = req.params;
-  // console.log(slug)
-  if (req.body.id || req.body.slug) {
-    // Bad request
-    res.status(400)
-    return res.json({"message": 'Bad request'})
+
+  // Ef breyta á titli deildar
+  if (req.body.title) {
+    req.body.slug = slugify(req.body.title, '-')
   }
 
   const fields = Object.keys(req.body)
@@ -61,12 +61,15 @@ export async function patchDepartment(
 
   const department = await getDepartmentBySlug(slug)
 
-  if (!department || !department.id)
+  if (!department || !department.id) {
+    res.status(404)
     return next()
+  }
 
   const result  = await conditionalUpdate('department', department?.id, fields, values)
   if (!result) {
-    return next()
+    res.status(400)
+    return res.json({"message": 'Bad request'})
   }
   const updatedDepartment = mapDbDepartmentToDepartment(result)
 

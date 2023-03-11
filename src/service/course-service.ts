@@ -11,6 +11,7 @@ import {
   mapDbCourseToCourse,
   mapDbCoursesToCourses,
 } from "../mappings/courses.js";
+import { slugify } from "../lib/slugify.js";
 
 export async function getCoursesService(
   req: Request,
@@ -80,13 +81,20 @@ export async function patchCourseService(
   next: NextFunction
 ) {
   console.log(req.params);
-  const courseId = Number(req.params.courseId);
+  const courseId = req.params.courseId;
+
+
+  // Ef breyta á númeri áfanga
+  if (req.body.number) {
+    req.body.slug = slugify(req.body.number, '-')
+  }
 
   const fields = Object.keys(req.body);
   const values: Array<string | number | null> = Object.values(req.body);
 
-  const course = await getCourseById(courseId);
+  const course = await getCourseBySlug(courseId);
 
+  // 404
   if (!course || !course.id) return next();
 
   const result = await conditionalUpdate("course", course.id, fields, values);
